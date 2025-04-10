@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Clone the repository manually
-        run: git clone https://github.com/guankong888/order_automation.git .  # Clones your repo
+        run: git clone https://github.com/guankong888/supptracker.git .  # Clones your repo
 
       - name: Manually Install Python
         run: |
