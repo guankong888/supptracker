@@ -1,0 +1,27 @@
+name: Run Python Script at the 20th Minute of Every Hour
+
+on:
+  schedule:
+    - cron: '20 * * * *'  # Runs at 20 minutes past every hour
+  workflow_dispatch:  # Allows manual execution
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone the repository manually
+        run: git clone https://github.com/guankong888/order_automation.git .  # Clones your repo
+
+      - name: Manually Install Python
+        run: |
+          sudo apt update
+          sudo apt install python3 python3-pip -y
+          python3 --version  # Verify Python installation
+
+      - name: Install dependencies manually
+        run: |
+          pip3 install pandas pyairtable msal requests openpyxl numpy usaddress fuzzywuzzy python-Levenshtein
+
+      - name: Run script
+        run: python3 order_automation.py  # Runs your script
