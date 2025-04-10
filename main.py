@@ -537,10 +537,14 @@ def update_airtable(club_summary):
         return
 
     logging.info("Updating Airtable...")
-    # Initialize Airtable API
+    
+    # Log the table name being used
+    logging.info("Using Airtable table: %s", AIRTABLE_TABLE_NAME)  # <--- Add this line here
+
     try:
         api = Api(api_key=AIRTABLE_ACCESS_TOKEN)
         table = api.table(AIRTABLE_BASE_ID, AIRTABLE_TABLE_NAME)
+        logging.info("Successfully initialized Airtable API.")
     except Exception as e:
         logging.error("Failed to initialize Airtable API: %s", e)
         return
@@ -553,10 +557,15 @@ def update_airtable(club_summary):
         dna_order_val = (row.get("DNA Order", "N") == "Y")
         mf_faire_order_val = (row.get("MF/FAIRE Order", "N") == "Y")
 
-        # Airtable formula for exact match on Club Code
         formula = f"{{New Code}} = '{club_code}'"
+        logging.info("Fetching record for Club Code '%s' with formula: %s", club_code, formula)  # <--- Add this line here
+
         try:
             records = table.all(formula=formula)
+            
+            # Log how many records were fetched
+            logging.info("Fetched records for '%s': %d records found", club_code, len(records))  # <--- Add this line here
+            
         except Exception as e:
             logging.error("Error fetching records for Club Code '%s': %s", club_code, e)
             continue
@@ -565,19 +574,19 @@ def update_airtable(club_summary):
             for rec in records:
                 record_id = rec["id"]
                 try:
-                    table.update(record_id, {
+                    logging.info(f"Updating record with ID {record_id} for Club Code '{club_code}'")
+                    response = table.update(record_id, {
                         "PEPSI": pepsi_val,
                         "SUPP RESTOCK": supps_val,
                         "N2G Water": n2g_val,
                         "DNA Order": dna_order_val,
                         "MF/FAIRE Order": mf_faire_order_val
                     })
-                    logging.info("Updated Airtable record for Club Code '%s'.", club_code)
+                    logging.info(f"Updated Airtable record for Club Code '{club_code}': {response}")
                 except Exception as e:
                     logging.error("Error updating Airtable record '%s' for Club Code '%s': %s", record_id, club_code, e)
         else:
             logging.warning("Club Code '%s' not found in Airtable; skipping.", club_code)
-
 def main():
     access_token = authenticate_graph()
     report_files = download_reports(access_token)
