@@ -24,4 +24,4 @@ jobs:
           pip3 install pandas pyairtable msal requests openpyxl numpy usaddress fuzzywuzzy python-Levenshtein
 
       - name: Run script
-        run: python3 order_automation.py  # Runs your script
+        run: python3 main.py  # Runs your script
